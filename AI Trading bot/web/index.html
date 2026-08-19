@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BloFin Trading Dashboard</title>
+    <link rel="stylesheet" href="/web/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">AI Trading Bot</p>
+          <h1>BloFin dashboard with strategy memory, ledger discipline, and dry-run safety.</h1>
+          <p class="hero-copy">
+            Manage your BloFin settings, preview trade automation, keep a markdown ledger, and maintain a living learning file from one local workspace.
+          </p>
+        </div>
+        <div class="status-panel">
+          <div class="status-row">
+            <span>Status</span>
+            <strong id="status-mode">Loading...</strong>
+          </div>
+          <div class="status-row">
+            <span>Default instrument</span>
+            <strong id="status-instrument">-</strong>
+          </div>
+          <div class="status-row">
+            <span>Cloud memory</span>
+            <strong id="status-cloud">-</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="card span-2">
+          <div class="card-head">
+            <h2>Settings</h2>
+            <button id="save-settings" class="button">Save settings</button>
+          </div>
+          <div class="two-col form-grid">
+            <label>
+              <span>Mode</span>
+              <select id="mode">
+                <option value="demo">demo</option>
+                <option value="production">production</option>
+              </select>
+            </label>
+            <label class="toggle">
+              <span>Dry run</span>
+              <input id="dry-run" type="checkbox" />
+            </label>
+            <label>
+              <span>Default instrument</span>
+              <input id="default-instrument" type="text" placeholder="BTC-USDT" />
+            </label>
+            <label>
+              <span>Poll seconds</span>
+              <input id="poll-seconds" type="number" min="5" step="1" />
+            </label>
+            <label>
+              <span>BloFin API key</span>
+              <input id="api-key" type="text" placeholder="[insert key]" />
+            </label>
+            <label>
+              <span>BloFin API secret</span>
+              <input id="api-secret" type="password" placeholder="[insert secret]" />
+            </label>
+            <label>
+              <span>BloFin passphrase</span>
+              <input id="passphrase" type="password" placeholder="[insert passphrase]" />
+            </label>
+            <label>
+              <span>Base URL</span>
+              <input id="base-url" type="text" placeholder="https://demo-trading-openapi.blofin.com" />
+            </label>
+            <label>
+              <span>Risk % per trade</span>
+              <input id="risk-per-trade" type="number" min="0.1" step="0.1" />
+            </label>
+            <label>
+              <span>Max open positions</span>
+              <input id="max-open-positions" type="number" min="1" step="1" />
+            </label>
+            <label class="toggle">
+              <span>Cloud memory enabled</span>
+              <input id="cloud-enabled" type="checkbox" />
+            </label>
+            <label>
+              <span>Cloud provider</span>
+              <select id="cloud-provider">
+                <option value="local_markdown">local_markdown</option>
+                <option value="supabase">supabase</option>
+                <option value="supermemory">supermemory</option>
+              </select>
+            </label>
+            <label>
+              <span>Supabase URL</span>
+              <input id="supabase-url" type="text" placeholder="https://project.supabase.co" />
+            </label>
+            <label>
+              <span>Supabase service role</span>
+              <input id="supabase-service-role" type="password" placeholder="service role key" />
+            </label>
+            <label>
+              <span>Supermemory API key</span>
+              <input id="supermemory-api-key" type="password" placeholder="optional placeholder" />
+            </label>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <h2>Market Snapshot</h2>
+            <button id="refresh-market" class="button ghost">Refresh</button>
+          </div>
+          <label class="inline-field">
+            <span>Instrument</span>
+            <input id="market-inst" type="text" placeholder="BTC-USDT" />
+          </label>
+          <div id="market-summary" class="metric-stack"></div>
+          <pre id="market-candles" class="code-block"></pre>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <h2>Account Snapshot</h2>
+            <button id="refresh-account" class="button ghost">Refresh</button>
+          </div>
+          <div id="account-summary" class="metric-stack"></div>
+        </section>
+
+        <section class="card span-2">
+          <div class="card-head">
+            <h2>Order Preview</h2>
+            <button id="send-order" class="button danger">Send / Preview order</button>
+          </div>
+          <div class="two-col form-grid">
+            <label>
+              <span>Instrument</span>
+              <input id="order-inst" type="text" placeholder="BTC-USDT" />
+            </label>
+            <label>
+              <span>Side</span>
+              <select id="order-side">
+                <option value="buy">buy</option>
+                <option value="sell">sell</option>
+              </select>
+            </label>
+            <label>
+              <span>Order type</span>
+              <select id="order-type">
+                <option value="market">market</option>
+                <option value="limit">limit</option>
+              </select>
+            </label>
+            <label>
+              <span>Position side</span>
+              <select id="position-side">
+                <option value="net">net</option>
+                <option value="long">long</option>
+                <option value="short">short</option>
+              </select>
+            </label>
+            <label>
+              <span>Margin mode</span>
+              <select id="margin-mode">
+                <option value="cross">cross</option>
+                <option value="isolated">isolated</option>
+              </select>
+            </label>
+            <label>
+              <span>Size</span>
+              <input id="order-size" type="text" placeholder="0.1" />
+            </label>
+            <label>
+              <span>Limit price</span>
+              <input id="order-price" type="text" placeholder="leave blank for market" />
+            </label>
+            <label>
+              <span>Client order ID</span>
+              <input id="client-order-id" type="text" placeholder="optional" />
+            </label>
+          </div>
+          <pre id="order-result" class="code-block"></pre>
+        </section>
+
+        <section class="card span-2">
+          <div class="card-head">
+            <h2>Trade Ledger</h2>
+            <button id="refresh-ledger" class="button ghost">Refresh</button>
+          </div>
+          <div class="three-col form-grid">
+            <label>
+              <span>Symbol</span>
+              <input id="ledger-symbol" type="text" placeholder="BTC-USDT" />
+            </label>
+            <label>
+              <span>Side</span>
+              <select id="ledger-side">
+                <option value="buy">buy</option>
+                <option value="sell">sell</option>
+              </select>
+            </label>
+            <label>
+              <span>Setup</span>
+              <input id="ledger-setup" type="text" placeholder="Breakout reclaim" />
+            </label>
+            <label>
+              <span>Entry price</span>
+              <input id="ledger-entry" type="text" />
+            </label>
+            <label>
+              <span>Exit price</span>
+              <input id="ledger-exit" type="text" />
+            </label>
+            <label>
+              <span>Size</span>
+              <input id="ledger-size" type="text" />
+            </label>
+            <label>
+              <span>Opened at</span>
+              <input id="ledger-opened" type="datetime-local" />
+            </label>
+            <label>
+              <span>Closed at</span>
+              <input id="ledger-closed" type="datetime-local" />
+            </label>
+            <label>
+              <span>PnL USD</span>
+              <input id="ledger-pnl-usd" type="text" />
+            </label>
+            <label>
+              <span>PnL R</span>
+              <input id="ledger-pnl-r" type="text" />
+            </label>
+            <label>
+              <span>Timeframe</span>
+              <input id="ledger-timeframe" type="text" placeholder="15m" />
+            </label>
+            <label>
+              <span>Session</span>
+              <input id="ledger-session" type="text" placeholder="London open" />
+            </label>
+          </div>
+          <label>
+            <span>Notes</span>
+            <textarea id="ledger-notes" rows="3" placeholder="Why you took it, what you saw, what you learned."></textarea>
+          </label>
+          <div class="card-actions">
+            <button id="add-trade" class="button">Add trade</button>
+          </div>
+          <div id="ledger-stats" class="metric-stack"></div>
+          <pre id="ledger-table" class="code-block"></pre>
+        </section>
+
+        <section class="card span-2">
+          <div class="card-head">
+            <h2>Strategy File</h2>
+            <button id="save-strategy" class="button">Save strategy</button>
+          </div>
+          <textarea id="strategy-content" class="editor" rows="20"></textarea>
+        </section>
+
+        <section class="card span-2">
+          <div class="card-head">
+            <h2>Learning File</h2>
+            <button id="refresh-learning" class="button ghost">Refresh reflection</button>
+          </div>
+          <textarea id="learning-content" class="editor" rows="20" readonly></textarea>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+    <script src="/web/app.js"></script>
+  </body>
+  </html>
+

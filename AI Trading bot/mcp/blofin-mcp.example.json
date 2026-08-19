@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "blofin": {
+      "command": "npx",
+      "args": ["-y", "blofin-mcp"],
+      "env": {
+        "BLOFIN_API_KEY": "[insert key]",
+        "BLOFIN_API_SECRET": "[insert secret]",
+        "BLOFIN_PASSPHRASE": "[insert passphrase]",
+        "BLOFIN_BASE_URL": "https://demo-trading-openapi.blofin.com"
+      }
+    }
+  }
+}
+
